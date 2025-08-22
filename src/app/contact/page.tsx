@@ -1,9 +1,19 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getPageContent, PageContent } from '@/sanity/lib/sanity'
 
 export default function Contact() {
+  const [pageContent, setPageContent] = useState<PageContent | null>(null)
+  
+  useEffect(() => {
+    async function fetchContent() {
+      const content = await getPageContent('contact')
+      setPageContent(content)
+    }
+    fetchContent()
+  }, [])
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -55,11 +65,13 @@ export default function Contact() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="inline-block mb-8"
             >
-              <span className="text-accent font-bold text-lg uppercase tracking-widest bg-accent-50 px-6 py-3 rounded-full">Let's Connect</span>
+              <span className="text-accent font-bold text-lg uppercase tracking-widest bg-accent-50 px-6 py-3 rounded-full">
+                {pageContent?.subtitle}
+              </span>
             </motion.div>
             
             <h1 className="text-6xl lg:text-8xl font-display font-bold text-foreground mb-8 leading-none">
-              Contact
+              {pageContent?.heroHeading}
             </h1>
             
             <motion.p 
@@ -68,8 +80,7 @@ export default function Contact() {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="text-2xl text-text-light leading-relaxed max-w-4xl mx-auto"
             >
-              I'd love to hear from you. Whether you're interested in collaborations, 
-              performances, or just want to share your thoughts about music.
+              {pageContent?.heroSubheading}
             </motion.p>
           </motion.div>
         </div>
@@ -176,7 +187,7 @@ export default function Contact() {
                     </div>
                     <h3 className="text-4xl font-display font-bold text-foreground mb-6">Message Sent!</h3>
                     <p className="text-xl text-text-light mb-8 leading-relaxed">
-                      Thank you for reaching out. I'll get back to you as soon as possible.
+                      Thank you for reaching out. I&apos;ll get back to you as soon as possible.
                     </p>
                     <button
                       onClick={() => setIsSubmitted(false)}
@@ -190,7 +201,7 @@ export default function Contact() {
                     <div className="text-center mb-12">
                       <h2 className="text-4xl font-display font-bold text-foreground mb-4">Send a Message</h2>
                       <p className="text-lg text-text-light">
-                        I'd love to hear about your project, event, or musical interests
+                        I&apos;d love to hear about your project, event, or musical interests
                       </p>
                     </div>
 
@@ -355,11 +366,11 @@ export default function Contact() {
             <div className="relative card-modern shadow-2xl p-16 bg-gradient-to-br from-card-bg/90 to-accent-50/90 backdrop-blur-sm">
               <div className="max-w-4xl mx-auto">
                 <h3 className="text-4xl lg:text-5xl font-display font-bold text-foreground mb-6">
-                  Let's Create Something Beautiful
+                  Let&apos;s Create Something Beautiful
                 </h3>
                 <p className="text-xl text-text-light mb-12 leading-relaxed">
-                  Whether it's a performance, collaboration, or lesson, I'm excited to be part of your musical journey. 
-                  Let's connect and explore how music can enhance your next project or event.
+                  Whether it&apos;s a performance, collaboration, or lesson, I&apos;m excited to be part of your musical journey. 
+                  Let&apos;s connect and explore how music can enhance your next project or event.
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">

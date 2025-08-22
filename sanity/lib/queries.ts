@@ -221,3 +221,77 @@ export const recordingsByGenreQuery = groq`
     }
   }
 `
+
+// Page content queries
+export const pageContentQuery = groq`
+  *[_type == "pageContent" && pageId == $pageId][0] {
+    _id,
+    pageId,
+    title,
+    subtitle,
+    heroHeading,
+    heroSubheading,
+    heroImage {
+      asset-> {
+        _id,
+        url,
+        metadata {
+          lqip,
+          dimensions
+        }
+      },
+      alt
+    },
+    sections[] {
+      sectionId,
+      heading,
+      content,
+      quote,
+      ctaText,
+      ctaLink,
+      backgroundImage {
+        asset-> {
+          _id,
+          url,
+          metadata {
+            lqip,
+            dimensions
+          }
+        },
+        alt
+      }
+    },
+    seo {
+      metaTitle,
+      metaDescription
+    }
+  }
+`
+
+// Site settings query
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings"][0] {
+    _id,
+    siteName,
+    siteTitle,
+    siteDescription,
+    logo {
+      asset-> {
+        _id,
+        url,
+        metadata {
+          lqip,
+          dimensions
+        }
+      },
+      alt
+    },
+    navigation[] {
+      title,
+      href,
+      isExternal
+    },
+    socialLinks,
+    contact
+  }
+`

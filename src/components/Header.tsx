@@ -1,20 +1,22 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
-
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Recordings', href: '/recordings' },
-  { name: 'Contact', href: '/contact' },
-]
+import { getSiteSettings, SiteSettings } from '@/sanity/lib/sanity'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null)
+  
+  useEffect(() => {
+    async function fetchSettings() {
+      const settings = await getSiteSettings()
+      setSiteSettings(settings)
+    }
+    fetchSettings()
+  }, [])
 
   return (
     <header className="bg-background/80 backdrop-blur-lg border-b border-border/50 sticky top-0 z-50 shadow-sm">
@@ -27,7 +29,7 @@ export default function Header() {
                 <span className="text-white font-bold text-lg">KL</span>
               </div>
               <div className="text-2xl font-display font-bold text-primary group-hover:text-accent transition-colors">
-                Ken Luk
+                {siteSettings?.siteName}
               </div>
             </div>
           </Link>
@@ -35,13 +37,14 @@ export default function Header() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             <nav className="flex space-x-1">
-              {navigation.map((item) => (
+              {siteSettings?.navigation?.map((item) => (
                 <Link
-                  key={item.name}
+                  key={item.title}
                   href={item.href}
                   className="relative text-text-light hover:text-accent px-4 py-2 text-base font-medium transition-all duration-300 rounded-lg hover:bg-accent-50 group"
+                  {...(item.isExternal && { target: '_blank', rel: 'noopener noreferrer' })}
                 >
-                  {item.name}
+                  {item.title}
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-8 group-hover:left-1/2 group-hover:-translate-x-1/2"></span>
                 </Link>
               ))}
@@ -92,9 +95,9 @@ export default function Header() {
             className="lg:hidden bg-background/95 backdrop-blur-lg border-t border-border/50"
           >
             <div className="px-6 pt-4 pb-6 space-y-2">
-              {navigation.map((item, index) => (
+              {siteSettings?.navigation?.map((item, index) => (
                 <motion.div
-                  key={item.name}
+                  key={item.title}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.2, delay: index * 0.1 }}
@@ -103,8 +106,9 @@ export default function Header() {
                     href={item.href}
                     className="block px-4 py-3 text-lg font-medium text-text-light hover:text-accent hover:bg-accent-50 rounded-xl transition-all duration-200 border border-transparent hover:border-accent-200"
                     onClick={() => setIsMenuOpen(false)}
+                    {...(item.isExternal && { target: '_blank', rel: 'noopener noreferrer' })}
                   >
-                    {item.name}
+                    {item.title}
                   </Link>
                 </motion.div>
               ))}

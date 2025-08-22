@@ -1,88 +1,15 @@
-'use client'
-
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { getAllPosts, getFeaturedPosts, getPageContent, BlogPost, PageContent } from '@/sanity/lib/sanity'
 
-// Mock data - this will be replaced with Sanity CMS data
-const mockPosts = [
-  {
-    id: 1,
-    title: "Exploring Classical Guitar Techniques",
-    excerpt: "A deep dive into fingerpicking patterns and their emotional impact on musical expression.",
-    category: "Classical Guitar",
-    publishedAt: "2024-08-15",
-    slug: "exploring-classical-guitar-techniques",
-    featured: true,
-    readTime: "8 min read",
-    tags: ["Technique", "Classical", "Guitar"]
-  },
-  {
-    id: 2,
-    title: "The Journey with Mandolin",
-    excerpt: "How the mandolin changed my perspective on rhythm and melody in contemporary music.",
-    category: "Mandolin",
-    publishedAt: "2024-08-10",
-    slug: "journey-with-mandolin",
-    featured: false,
-    readTime: "6 min read",
-    tags: ["Mandolin", "Journey", "Folk"]
-  },
-  {
-    id: 3,
-    title: "Reggae Influences in My Playing",
-    excerpt: "Discovering how reggae rhythms can be adapted for classical instruments.",
-    category: "Reggae",
-    publishedAt: "2024-08-05",
-    slug: "reggae-influences",
-    featured: false,
-    readTime: "5 min read",
-    tags: ["Reggae", "Fusion", "Innovation"]
-  },
-  {
-    id: 4,
-    title: "Musical Reflections on Performance",
-    excerpt: "Thoughts on connecting with audiences through authentic musical expression.",
-    category: "Performance",
-    publishedAt: "2024-07-28",
-    slug: "musical-reflections-performance",
-    featured: false,
-    readTime: "7 min read",
-    tags: ["Performance", "Connection", "Audience"]
-  },
-  {
-    id: 5,
-    title: "Recording Studio Insights",
-    excerpt: "Behind the scenes of my latest recording sessions and the creative process.",
-    category: "Recording",
-    publishedAt: "2024-07-20",
-    slug: "recording-studio-insights",
-    featured: false,
-    readTime: "9 min read",
-    tags: ["Recording", "Studio", "Process"]
-  },
-  {
-    id: 6,
-    title: "Spanish Guitar Traditions",
-    excerpt: "Exploring the rich heritage of Spanish classical guitar and its influence on modern playing.",
-    category: "Classical Guitar",
-    publishedAt: "2024-07-15",
-    slug: "spanish-guitar-traditions",
-    featured: false,
-    readTime: "10 min read",
-    tags: ["Spanish", "Tradition", "Heritage"]
-  }
-]
-
-const categories = [
-  "All",
-  "Classical Guitar",
-  "Mandolin", 
-  "Reggae",
-  "Performance",
-  "Recording"
-]
-
-export default function Blog() {
+export default async function Blog() {
+  const [posts, featuredPosts, pageContent] = await Promise.all([
+    getAllPosts(),
+    getFeaturedPosts(),
+    getPageContent('blog')
+  ])
+  
+  const categories = ['All', 'Classical Guitar', 'Mandolin', 'Reggae', 'Performance', 'Recording']
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section with Modern Design */}
@@ -104,11 +31,13 @@ export default function Blog() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="inline-block mb-8"
             >
-              <span className="text-accent font-bold text-lg uppercase tracking-widest bg-accent-50 px-6 py-3 rounded-full">Musical Insights</span>
+              <span className="text-accent font-bold text-lg uppercase tracking-widest bg-accent-50 px-6 py-3 rounded-full">
+                {pageContent?.subtitle}
+              </span>
             </motion.div>
             
             <h1 className="text-6xl lg:text-8xl font-display font-bold text-foreground mb-8 leading-none">
-              Blog
+              {pageContent?.heroHeading}
             </h1>
             
             <motion.p 
@@ -117,8 +46,7 @@ export default function Blog() {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="text-2xl text-text-light leading-relaxed max-w-4xl mx-auto"
             >
-              Reflections on music, technique, and the artistic journey. 
-              Sharing insights from my experiences with classical guitar and mandolin.
+              {pageContent?.heroSubheading}
             </motion.p>
           </motion.div>
         </div>
@@ -134,8 +62,12 @@ export default function Blog() {
           className="mb-20"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-display font-bold text-foreground mb-4">Explore by Category</h2>
-            <p className="text-lg text-text-muted">Discover insights across different musical topics</p>
+            <h2 className="text-3xl font-display font-bold text-foreground mb-4">
+              {pageContent?.sections?.[0]?.heading}
+            </h2>
+            <p className="text-lg text-text-muted">
+              {pageContent?.sections?.[0]?.quote}
+            </p>
           </div>
           
           <div className="flex flex-wrap gap-4 justify-center">
@@ -164,7 +96,7 @@ export default function Blog() {
           transition={{ duration: 0.8 }}
           className="mb-20"
         >
-          {mockPosts.filter(post => post.featured).map((post) => (
+          {featuredPosts.map((post) => (
             <div key={post.id} className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-accent-50 to-background rounded-3xl"></div>
               <div className="relative card-modern shadow-2xl overflow-hidden bg-gradient-to-br from-card-bg/90 to-accent-50/90 backdrop-blur-sm">
@@ -249,7 +181,7 @@ export default function Blog() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mockPosts.filter(post => !post.featured).map((post, index) => (
+            {posts.filter(post => !post.featured).map((post, index) => (
               <motion.article
                 key={post.id}
                 initial={{ opacity: 0, y: 30 }}

@@ -1,9 +1,9 @@
-'use client'
-
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { getPageContent, PageContent } from '@/sanity/lib/sanity'
 
-export default function Home() {
+export default async function Home() {
+  const pageContent = await getPageContent('home')
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section - Modern Gradient */}
@@ -23,11 +23,13 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="inline-block mb-6"
               >
-                <span className="text-accent font-medium text-sm uppercase tracking-widest mb-4 block">Musical Artistry</span>
+                <span className="text-accent font-medium text-sm uppercase tracking-widest mb-4 block">
+                  {pageContent?.subtitle}
+                </span>
               </motion.div>
               
               <h1 className="text-5xl lg:text-7xl font-display font-bold text-primary mb-6 leading-tight">
-                Ken Luk
+                {pageContent?.heroHeading}
               </h1>
               
               <motion.div
@@ -37,11 +39,10 @@ export default function Home() {
                 className="mb-8"
               >
                 <p className="text-xl lg:text-2xl text-primary font-medium mb-3">
-                  Classical Guitarist & Mandolinist
+                  {pageContent?.title}
                 </p>
                 <p className="text-lg text-text-light mb-8 max-w-3xl mx-auto leading-relaxed">
-                  Exploring the depths of musical expression through traditional and contemporary compositions. 
-                  Join me on a journey of classical guitar, mandolin artistry, and musical discovery.
+                  {pageContent?.heroSubheading}
                 </p>
               </motion.div>
               
@@ -85,10 +86,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl lg:text-5xl font-display font-bold text-primary mb-4">
-              Recent Reflections
+              {pageContent?.sections?.[0]?.heading}
             </h2>
             <p className="text-lg text-text-muted max-w-2xl mx-auto">
-              Insights from my musical journey, technique explorations, and artistic discoveries
+              {pageContent?.sections?.[0]?.quote}
             </p>
           </motion.div>
           
@@ -213,9 +214,11 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h3 className="text-3xl font-display font-bold text-primary mb-4">Stay Connected</h3>
+            <h3 className="text-3xl font-display font-bold text-primary mb-4">
+              {pageContent?.sections?.[1]?.heading}
+            </h3>
             <p className="text-lg text-text-light max-w-2xl mx-auto">
-              Join the journey of musical discovery. Get updates on new recordings, blog posts, and performance announcements.
+              {pageContent?.sections?.[1]?.quote}
             </p>
           </motion.div>
           

@@ -7,7 +7,9 @@ import {
   recordingsQuery,
   featuredRecordingsQuery,
   recordingBySlugQuery,
-  recordingsByGenreQuery
+  recordingsByGenreQuery,
+  pageContentQuery,
+  siteSettingsQuery
 } from './queries'
 
 // Types
@@ -64,6 +66,58 @@ export interface Recording {
   audioFile?: SanityAudioFile
 }
 
+export interface PageSection {
+  sectionId?: string
+  heading?: string
+  content?: any[]
+  quote?: string
+  ctaText?: string
+  ctaLink?: string
+  backgroundImage?: SanityImage
+}
+
+export interface PageContent {
+  _id: string
+  pageId: string
+  title: string
+  subtitle?: string
+  heroHeading?: string
+  heroSubheading?: string
+  heroImage?: SanityImage
+  sections?: PageSection[]
+  seo?: {
+    metaTitle?: string
+    metaDescription?: string
+  }
+}
+
+export interface NavigationItem {
+  title: string
+  href: string
+  isExternal?: boolean
+}
+
+export interface SiteSettings {
+  _id: string
+  siteName: string
+  siteTitle?: string
+  siteDescription?: string
+  logo?: SanityImage
+  navigation?: NavigationItem[]
+  socialLinks?: {
+    youtube?: string
+    spotify?: string
+    instagram?: string
+    facebook?: string
+    twitter?: string
+  }
+  contact?: {
+    email?: string
+    phone?: string
+    address?: string
+  }
+}
+
 // Blog post functions
 export async function getAllPosts(): Promise<BlogPost[]> {
   return await client.fetch(postsQuery)
@@ -96,6 +150,16 @@ export async function getRecordingBySlug(slug: string): Promise<Recording | null
 
 export async function getRecordingsByGenre(genre: string): Promise<Recording[]> {
   return await client.fetch(recordingsByGenreQuery, { genre })
+}
+
+// Page content functions
+export async function getPageContent(pageId: string): Promise<PageContent | null> {
+  return await client.fetch(pageContentQuery, { pageId })
+}
+
+// Site settings functions
+export async function getSiteSettings(): Promise<SiteSettings | null> {
+  return await client.fetch(siteSettingsQuery)
 }
 
 // Utility functions

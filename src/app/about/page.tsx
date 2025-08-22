@@ -1,8 +1,8 @@
-'use client'
-
 import { motion } from 'framer-motion'
+import { getPageContent, PageContent } from '@/sanity/lib/sanity'
 
-export default function About() {
+export default async function About() {
+  const pageContent = await getPageContent('about')
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section with Dramatic Design */}
@@ -24,11 +24,13 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="inline-block mb-8"
             >
-              <span className="text-accent font-bold text-lg uppercase tracking-widest bg-accent-50 px-6 py-3 rounded-full">The Artist</span>
+              <span className="text-accent font-bold text-lg uppercase tracking-widest bg-accent-50 px-6 py-3 rounded-full">
+                {pageContent?.subtitle}
+              </span>
             </motion.div>
             
             <h1 className="text-6xl lg:text-8xl font-display font-bold text-foreground mb-8 leading-none">
-              About Ken
+              {pageContent?.heroHeading}
             </h1>
             
             <motion.p 
@@ -37,8 +39,7 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="text-2xl text-text-light leading-relaxed max-w-4xl mx-auto"
             >
-              A journey through classical guitar and mandolin, exploring the depths of musical expression 
-              across traditional and contemporary compositions.
+              {pageContent?.heroSubheading}
             </motion.p>
           </motion.div>
         </div>
@@ -66,7 +67,7 @@ export default function About() {
                   <p>
                     My journey began with classical guitar, drawn to its intimate voice and the rich tradition 
                     of Spanish and Latin American compositions. Each piece tells a story, and through years 
-                    of dedicated practice, I've learned to be both narrator and listener.
+                    of dedicated practice, I&apos;ve learned to be both narrator and listener.
                   </p>
                   <p>
                     The mandolin entered my world later, offering a different perspective on melody 
@@ -226,13 +227,13 @@ export default function About() {
                 <h2 className="text-5xl font-display font-bold text-foreground mb-12">Musical Philosophy</h2>
                 
                 <div className="relative mb-12">
-                  <div className="absolute -top-8 -left-8 text-8xl text-accent-200 font-serif leading-none">"</div>
+                  <div className="absolute -top-8 -left-8 text-8xl text-accent-200 font-serif leading-none">&ldquo;</div>
                   <blockquote className="text-3xl lg:text-4xl text-foreground leading-relaxed font-light relative z-10 px-12">
                     Music is the universal language that speaks to the soul. Through my instruments, 
                     I strive to create authentic connections—honoring the traditions that came before 
                     while finding new ways to express the emotions and stories that define our human experience.
                   </blockquote>
-                  <div className="absolute -bottom-8 -right-8 text-8xl text-accent-200 font-serif leading-none">"</div>
+                  <div className="absolute -bottom-8 -right-8 text-8xl text-accent-200 font-serif leading-none">&rdquo;</div>
                 </div>
                 
                 <div className="flex items-center justify-center gap-4 pt-8 border-t border-border/30">

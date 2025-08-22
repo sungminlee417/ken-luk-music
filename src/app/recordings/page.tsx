@@ -1,53 +1,28 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getAllRecordings, getFeaturedRecordings, getPageContent, Recording, PageContent } from '@/sanity/lib/sanity'
 
-// Mock data - will be replaced with Sanity CMS data
-const mockRecordings = [
-  {
-    id: 1,
-    title: "Spanish Romance",
-    description: "A classical guitar interpretation of this beloved Spanish piece, focusing on emotional expression and melodic phrasing. This recording captures the intimate nature of solo guitar performance.",
-    instrument: "Classical Guitar",
-    genre: "Classical",
-    duration: 245,
-    featured: true,
-    externalUrl: "#",
-    year: "2024",
-    venue: "Studio Recording",
-    techniques: ["Fingerpicking", "Tremolo", "Harmonics"]
-  },
-  {
-    id: 2,
-    title: "Mandolin Variations",
-    description: "Original compositions exploring the rhythmic possibilities of the mandolin in contemporary settings. A fusion of traditional folk melodies with modern harmonic progressions.",
-    instrument: "Mandolin",
-    genre: "Original",
-    duration: 180,
-    featured: false,
-    externalUrl: "#",
-    year: "2024",
-    venue: "Live Performance",
-    techniques: ["Tremolo", "Cross-picking", "Chord melody"]
-  },
-  {
-    id: 3,
-    title: "Reggae Fusion",
-    description: "An experimental piece blending traditional classical guitar techniques with reggae-inspired rhythms. This innovative approach creates a unique musical dialogue between genres.",
-    instrument: "Both",
-    genre: "Reggae",
-    duration: 320,
-    featured: true,
-    externalUrl: "#",
-    year: "2023",
-    venue: "Studio Recording",
-    techniques: ["Syncopation", "Palm muting", "Hybrid picking"]
-  },
-  {
-    id: 4,
-    title: "Folk Memories",
-    description: "A collection of folk-inspired melodies played on mandolin, capturing the essence of traditional storytelling through instrumental narrative.",
+export default function Recordings() {
+  const [recordings, setRecordings] = useState<Recording[]>([])
+  const [featuredRecordings, setFeaturedRecordings] = useState<Recording[]>([])
+  const [pageContent, setPageContent] = useState<PageContent | null>(null)
+  const [selectedGenre, setSelectedGenre] = useState('All')
+  
+  useEffect(() => {
+    async function fetchData() {
+      const [allRecordings, featured, content] = await Promise.all([
+        getAllRecordings(),
+        getFeaturedRecordings(),
+        getPageContent('recordings')
+      ])
+      setRecordings(allRecordings)
+      setFeaturedRecordings(featured)
+      setPageContent(content)
+    }
+    fetchData()
+  }, [])
     instrument: "Mandolin",
     genre: "Folk",
     duration: 275,
@@ -147,16 +122,12 @@ const AudioPlayer = ({ title, duration, featured = false }: { title: string; dur
   )
 }
 
-const genres = ["All", "Classical", "Folk", "Reggae", "Original", "Latin"]
-
-export default function Recordings() {
-  const [selectedGenre, setSelectedGenre] = useState("All")
+  const genres = ['All', 'Classical', 'Folk', 'Reggae', 'Original', 'Jazz']
   
-  const filteredRecordings = selectedGenre === "All" 
-    ? mockRecordings 
-    : mockRecordings.filter(recording => recording.genre === selectedGenre)
-
-  const featuredRecordings = mockRecordings.filter(r => r.featured)
+  // Filter recordings by genre
+  const filteredRecordings = selectedGenre === 'All' 
+    ? recordings 
+    : recordings.filter(recording => recording.genre === selectedGenre)
   const regularRecordings = mockRecordings.filter(r => !r.featured)
 
   return (
@@ -181,11 +152,13 @@ export default function Recordings() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="inline-block mb-8"
             >
-              <span className="text-accent font-bold text-lg uppercase tracking-widest bg-accent-50 px-6 py-3 rounded-full">Musical Portfolio</span>
+              <span className="text-accent font-bold text-lg uppercase tracking-widest bg-accent-50 px-6 py-3 rounded-full">
+                {pageContent?.subtitle}
+              </span>
             </motion.div>
             
             <h1 className="text-6xl lg:text-8xl font-display font-bold text-foreground mb-8 leading-none">
-              Recordings
+              {pageContent?.heroHeading}
             </h1>
             
             <motion.p 
@@ -194,8 +167,7 @@ export default function Recordings() {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="text-2xl text-text-light leading-relaxed max-w-4xl mx-auto"
             >
-              A curated collection of musical recordings spanning classical guitar and mandolin, 
-              showcasing diverse genres and innovative approaches to traditional instruments.
+              {pageContent?.heroSubheading}
             </motion.p>
           </motion.div>
         </div>
@@ -249,7 +221,7 @@ export default function Recordings() {
             </div>
             
             <div className="space-y-12">
-              {featuredRecordings.map((recording, index) => (
+              {featuredRecordings.map((recording) => (
                 <div key={recording.id} className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-accent-50 to-background rounded-3xl"></div>
                   <div className="relative card-modern shadow-2xl overflow-hidden bg-gradient-to-br from-card-bg/90 to-accent-50/90 backdrop-blur-sm">
@@ -442,7 +414,7 @@ export default function Recordings() {
                 </h3>
                 <p className="text-xl text-text-light mb-12 leading-relaxed">
                   Follow me on streaming platforms to stay updated with new releases and performances. 
-                  Let's connect through the universal language of music and explore the boundaries of classical guitar and mandolin together.
+                  Let&apos;s connect through the universal language of music and explore the boundaries of classical guitar and mandolin together.
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
