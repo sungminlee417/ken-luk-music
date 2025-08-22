@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { getSiteSettings, SiteSettings } from '@/sanity/lib/sanity'
+import { getSiteSettings, SiteSettings } from '@/cms'
 
 const currentYear = new Date().getFullYear()
 

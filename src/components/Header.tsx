@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
-import { getSiteSettings, SiteSettings } from '@/sanity/lib/sanity'
+import { getSiteSettings, SiteSettings } from '@/cms'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)

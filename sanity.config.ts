@@ -1,8 +1,8 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 
-import { dataset, projectId } from './sanity/env'
-import { schemaTypes } from './sanity/schemas'
+import { dataset, projectId } from './cms/config/env'
+import { schemaTypes } from './cms/schemas'
 
 export default defineConfig({
   basePath: '/studio',

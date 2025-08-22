@@ -2,13 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { getPageContent } from '@/sanity/lib/sanity'
-
-interface PageContent {
-  subtitle?: string
-  heroHeading?: string
-  heroSubheading?: string
-}
+import { getPageContent, PageContent } from '@/cms'
+import { PortableText, getSection } from '@/cms/utils/portableText'
 
 export default function About() {
   const [pageContent, setPageContent] = useState<PageContent | null>(null)
@@ -18,8 +13,8 @@ export default function About() {
       try {
         const content = await getPageContent('about')
         setPageContent(content)
-      } catch (error) {
-        console.log('No Sanity content found, using fallbacks')
+      } catch {
+        console.log('No Sanity content found')
         setPageContent(null)
       }
     }
@@ -80,26 +75,11 @@ export default function About() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
               <div className="card-modern shadow-xl p-12 bg-gradient-to-br from-card-bg to-accent-50">
-                <h2 className="text-5xl font-display font-bold text-foreground mb-8">My Musical Journey</h2>
-                <div className="space-y-8 text-lg text-text-light leading-relaxed">
-                  <p className="text-xl font-medium text-foreground">
-                    Music has been the constant thread weaving through my life, connecting moments 
-                    of joy, reflection, and discovery.
-                  </p>
-                  <p>
-                    My journey began with classical guitar, drawn to its intimate voice and the rich tradition 
-                    of Spanish and Latin American compositions. Each piece tells a story, and through years 
-                    of dedicated practice, I&apos;ve learned to be both narrator and listener.
-                  </p>
-                  <p>
-                    The mandolin entered my world later, offering a different perspective on melody 
-                    and rhythm. Its bright, percussive voice opened doors to folk traditions, 
-                    reggae explorations, and cross-cultural musical dialogues that continue to inspire my playing.
-                  </p>
-                  <p className="text-xl font-medium text-accent">
-                    Through this blog and my recordings, I share not just the music itself, 
-                    but the stories, techniques, and emotions that bring each piece to life.
-                  </p>
+                <h2 className="text-5xl font-display font-bold text-foreground mb-8">
+                  {getSection(pageContent?.sections || [], 'musical-journey')?.heading || 'My Musical Journey'}
+                </h2>
+                <div className="space-y-8">
+                  <PortableText content={getSection(pageContent?.sections || [], 'musical-journey')?.content} />
                 </div>
               </div>
             </div>
@@ -135,10 +115,10 @@ export default function About() {
         >
           <div className="text-center mb-20">
             <h2 className="text-5xl lg:text-6xl font-display font-bold text-foreground mb-6">
-              Instruments & Mastery
+              {getSection(pageContent?.sections || [], 'instruments-mastery')?.heading || 'Instruments & Mastery'}
             </h2>
             <p className="text-xl text-text-muted max-w-3xl mx-auto leading-relaxed">
-              Two instruments, countless possibilities for musical expression and artistic exploration
+              {getSection(pageContent?.sections || [], 'instruments-mastery')?.quote || 'Two instruments, countless possibilities for musical expression and artistic exploration'}
             </p>
           </div>
           
@@ -163,13 +143,11 @@ export default function About() {
                 </div>
                 <div className="p-10">
                   <h3 className="text-3xl font-display font-bold text-foreground mb-6 group-hover:text-accent transition-colors">
-                    Classical Guitar
+                    {getSection(pageContent?.sections || [], 'classical-guitar')?.heading || 'Classical Guitar'}
                   </h3>
-                  <p className="text-lg text-text-light leading-relaxed mb-6">
-                    Specializing in Spanish and Latin American repertoire, with a focus on 
-                    expressive interpretation and technical precision. I explore both traditional 
-                    pieces and contemporary compositions that push the boundaries of the instrument.
-                  </p>
+                  <div className="mb-6">
+                    <PortableText content={getSection(pageContent?.sections || [], 'classical-guitar')?.content} />
+                  </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-accent rounded-full"></div>
@@ -208,13 +186,11 @@ export default function About() {
                 </div>
                 <div className="p-10">
                   <h3 className="text-3xl font-display font-bold text-foreground mb-6 group-hover:text-accent transition-colors">
-                    Mandolin
+                    {getSection(pageContent?.sections || [], 'mandolin')?.heading || 'Mandolin'}
                   </h3>
-                  <p className="text-lg text-text-light leading-relaxed mb-6">
-                    From folk traditions to reggae rhythms, the mandolin brings a unique voice 
-                    to my musical expression. I enjoy exploring how this instrument can bridge 
-                    different genres and cultural musical traditions.
-                  </p>
+                  <div className="mb-6">
+                    <PortableText content={getSection(pageContent?.sections || [], 'mandolin')?.content} />
+                  </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-accent rounded-full"></div>
@@ -246,14 +222,14 @@ export default function About() {
             <div className="absolute inset-0 bg-gradient-to-br from-accent-50 to-background rounded-3xl"></div>
             <div className="relative card-modern shadow-2xl p-16 bg-gradient-to-br from-card-bg/90 to-accent-50/90 backdrop-blur-sm">
               <div className="max-w-5xl mx-auto text-center">
-                <h2 className="text-5xl font-display font-bold text-foreground mb-12">Musical Philosophy</h2>
+                <h2 className="text-5xl font-display font-bold text-foreground mb-12">
+                  {getSection(pageContent?.sections || [], 'philosophy')?.heading || 'Musical Philosophy'}
+                </h2>
                 
                 <div className="relative mb-12">
                   <div className="absolute -top-8 -left-8 text-8xl text-accent-200 font-serif leading-none">&ldquo;</div>
                   <blockquote className="text-3xl lg:text-4xl text-foreground leading-relaxed font-light relative z-10 px-12">
-                    Music is the universal language that speaks to the soul. Through my instruments, 
-                    I strive to create authentic connections—honoring the traditions that came before 
-                    while finding new ways to express the emotions and stories that define our human experience.
+                    {getSection(pageContent?.sections || [], 'philosophy')?.quote || 'Music is the universal language that speaks to the soul. Through my instruments, I strive to create authentic connections—honoring the traditions that came before while finding new ways to express the emotions and stories that define our human experience.'}
                   </blockquote>
                   <div className="absolute -bottom-8 -right-8 text-8xl text-accent-200 font-serif leading-none">&rdquo;</div>
                 </div>
@@ -277,11 +253,11 @@ export default function About() {
         >
           <div className="card-modern shadow-xl p-12 bg-gradient-to-br from-accent-50 to-card-bg">
             <h3 className="text-4xl font-display font-bold text-foreground mb-6">
-              Experience the Music
+              {getSection(pageContent?.sections || [], 'experience-music')?.heading || 'Experience the Music'}
             </h3>
-            <p className="text-xl text-text-light mb-10 max-w-2xl mx-auto leading-relaxed">
-              Explore my recordings, read about my musical journey, or get in touch to discuss performances and collaborations.
-            </p>
+            <div className="text-xl mb-10 max-w-2xl mx-auto">
+              <PortableText content={getSection(pageContent?.sections || [], 'experience-music')?.content} />
+            </div>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <a href="/recordings" className="btn-primary px-8 py-4 text-lg">
                 Listen to Recordings

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { getAllRecordings, getFeaturedRecordings, getPageContent, Recording, PageContent } from '@/sanity/lib/sanity'
+import { getAllRecordings, getFeaturedRecordings, getPageContent, Recording, PageContent } from '@/cms'
 
 export default function Recordings() {
   const [recordings, setRecordings] = useState<Recording[]>([])

@@ -3,18 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { getPageContent } from '@/sanity/lib/sanity'
-
-interface PageContent {
-  subtitle?: string
-  heroHeading?: string
-  title?: string
-  heroSubheading?: string
-  sections?: Array<{
-    heading?: string
-    quote?: string
-  }>
-}
+import { getPageContent, PageContent } from '@/cms'
 
 export default function Home() {
   const [pageContent, setPageContent] = useState<PageContent | null>(null)
@@ -24,8 +13,8 @@ export default function Home() {
       try {
         const content = await getPageContent('home')
         setPageContent(content)
-      } catch (error) {
-        console.log('No Sanity content found, using fallbacks')
+      } catch {
+        console.log('No Sanity content found')
         setPageContent(null)
       }
     }

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { getPageContent, PageContent } from '@/sanity/lib/sanity'
+import { getPageContent, PageContent } from '@/cms'
 
 export default function Contact() {
   const [pageContent, setPageContent] = useState<PageContent | null>(null)

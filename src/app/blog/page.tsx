@@ -3,27 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { getAllPosts, getFeaturedPosts, getPageContent } from '@/sanity/lib/sanity'
-
-interface BlogPost {
-  _id: string
-  title: string
-  slug: { current: string }
-  excerpt?: string
-  publishedAt: string
-  category: string
-  featured: boolean
-}
-
-interface PageContent {
-  subtitle?: string
-  heroHeading?: string
-  heroSubheading?: string
-  sections?: Array<{
-    heading?: string
-    quote?: string
-  }>
-}
+import { getAllPosts, getFeaturedPosts, getPageContent, BlogPost, PageContent } from '@/cms'
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([])
