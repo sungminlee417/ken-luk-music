@@ -1,13 +1,55 @@
+'use client'
+
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { getAllPosts, getFeaturedPosts, getPageContent, BlogPost, PageContent } from '@/sanity/lib/sanity'
+import { useState, useEffect } from 'react'
+import { getAllPosts, getFeaturedPosts, getPageContent } from '@/sanity/lib/sanity'
 
-export default async function Blog() {
-  const [posts, featuredPosts, pageContent] = await Promise.all([
-    getAllPosts(),
-    getFeaturedPosts(),
-    getPageContent('blog')
-  ])
+interface BlogPost {
+  _id: string
+  title: string
+  slug: { current: string }
+  excerpt?: string
+  publishedAt: string
+  category: string
+  featured: boolean
+}
+
+interface PageContent {
+  subtitle?: string
+  heroHeading?: string
+  heroSubheading?: string
+  sections?: Array<{
+    heading?: string
+    quote?: string
+  }>
+}
+
+export default function Blog() {
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([])
+  const [pageContent, setPageContent] = useState<PageContent | null>(null)
+  
+  useEffect(() => {
+    async function fetchContent() {
+      try {
+        const [allPosts, featured, content] = await Promise.all([
+          getAllPosts(),
+          getFeaturedPosts(),
+          getPageContent('blog')
+        ])
+        setPosts(allPosts)
+        setFeaturedPosts(featured)
+        setPageContent(content)
+      } catch (error) {
+        console.log('No Sanity content found, using fallbacks')
+        setPosts([])
+        setFeaturedPosts([])
+        setPageContent(null)
+      }
+    }
+    fetchContent()
+  }, [])
   
   const categories = ['All', 'Classical Guitar', 'Mandolin', 'Reggae', 'Performance', 'Recording']
   return (
@@ -97,7 +139,7 @@ export default async function Blog() {
           className="mb-20"
         >
           {featuredPosts.map((post) => (
-            <div key={post.id} className="relative">
+            <div key={post._id} className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-accent-50 to-background rounded-3xl"></div>
               <div className="relative card-modern shadow-2xl overflow-hidden bg-gradient-to-br from-card-bg/90 to-accent-50/90 backdrop-blur-sm">
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-accent to-accent-light"></div>
@@ -108,11 +150,11 @@ export default async function Blog() {
                       <span className="bg-gradient-to-r from-accent to-accent-light text-white text-sm px-4 py-2 rounded-full font-bold shadow-lg">
                         ✨ Featured Post
                       </span>
-                      <span className="text-accent font-medium">{post.readTime}</span>
+                      <span className="text-accent font-medium">{post.category}</span>
                     </div>
                     
                     <h2 className="text-4xl lg:text-5xl font-display font-bold text-foreground mb-6 leading-tight">
-                      <Link href={`/blog/${post.slug}`} className="hover:text-accent transition-colors">
+                      <Link href={`/blog/${post.slug.current}`} className="hover:text-accent transition-colors">
                         {post.title}
                       </Link>
                     </h2>
@@ -122,16 +164,14 @@ export default async function Blog() {
                     </p>
                     
                     <div className="flex flex-wrap gap-3 mb-8">
-                      {post.tags.map((tag) => (
-                        <span key={tag} className="bg-accent-100 text-accent px-3 py-1 rounded-full text-sm font-medium">
-                          #{tag}
-                        </span>
-                      ))}
+                      <span className="bg-accent-100 text-accent px-3 py-1 rounded-full text-sm font-medium">
+                        {post.category}
+                      </span>
                     </div>
                     
                     <div className="flex items-center justify-between">
                       <Link 
-                        href={`/blog/${post.slug}`} 
+                        href={`/blog/${post.slug.current}`} 
                         className="btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg"
                       >
                         Read Full Article
@@ -183,7 +223,7 @@ export default async function Blog() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.filter(post => !post.featured).map((post, index) => (
               <motion.article
-                key={post.id}
+                key={post._id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -213,11 +253,11 @@ export default async function Blog() {
                         day: 'numeric' 
                       })}
                     </span>
-                    <span className="text-sm text-accent font-medium">{post.readTime}</span>
+                    <span className="text-sm text-accent font-medium">{new Date(post.publishedAt).toLocaleDateString()}</span>
                   </div>
                   
                   <h3 className="text-xl font-display font-bold text-foreground mb-4 group-hover:text-accent transition-colors leading-tight">
-                    <Link href={`/blog/${post.slug}`}>
+                    <Link href={`/blog/${post.slug.current}`}>
                       {post.title}
                     </Link>
                   </h3>
@@ -227,15 +267,13 @@ export default async function Blog() {
                   </p>
                   
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {post.tags.slice(0, 2).map((tag) => (
-                      <span key={tag} className="bg-gray-100 text-text-muted px-2 py-1 rounded text-xs font-medium">
-                        #{tag}
-                      </span>
-                    ))}
+                    <span className="bg-gray-100 text-text-muted px-2 py-1 rounded text-xs font-medium">
+                      {post.category}
+                    </span>
                   </div>
                   
                   <Link 
-                    href={`/blog/${post.slug}`} 
+                    href={`/blog/${post.slug.current}`} 
                     className="inline-flex items-center gap-2 text-accent hover:text-accent-light font-semibold transition-all duration-300 group-hover:gap-3"
                   >
                     Read Article

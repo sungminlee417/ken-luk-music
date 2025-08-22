@@ -1,9 +1,36 @@
+'use client'
+
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { getPageContent, PageContent } from '@/sanity/lib/sanity'
+import { useState, useEffect } from 'react'
+import { getPageContent } from '@/sanity/lib/sanity'
 
-export default async function Home() {
-  const pageContent = await getPageContent('home')
+interface PageContent {
+  subtitle?: string
+  heroHeading?: string
+  title?: string
+  heroSubheading?: string
+  sections?: Array<{
+    heading?: string
+    quote?: string
+  }>
+}
+
+export default function Home() {
+  const [pageContent, setPageContent] = useState<PageContent | null>(null)
+  
+  useEffect(() => {
+    async function fetchContent() {
+      try {
+        const content = await getPageContent('home')
+        setPageContent(content)
+      } catch (error) {
+        console.log('No Sanity content found, using fallbacks')
+        setPageContent(null)
+      }
+    }
+    fetchContent()
+  }, [])
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section - Modern Gradient */}

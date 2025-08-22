@@ -1,8 +1,30 @@
-import { motion } from 'framer-motion'
-import { getPageContent, PageContent } from '@/sanity/lib/sanity'
+'use client'
 
-export default async function About() {
-  const pageContent = await getPageContent('about')
+import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { getPageContent } from '@/sanity/lib/sanity'
+
+interface PageContent {
+  subtitle?: string
+  heroHeading?: string
+  heroSubheading?: string
+}
+
+export default function About() {
+  const [pageContent, setPageContent] = useState<PageContent | null>(null)
+  
+  useEffect(() => {
+    async function fetchContent() {
+      try {
+        const content = await getPageContent('about')
+        setPageContent(content)
+      } catch (error) {
+        console.log('No Sanity content found, using fallbacks')
+        setPageContent(null)
+      }
+    }
+    fetchContent()
+  }, [])
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section with Dramatic Design */}
